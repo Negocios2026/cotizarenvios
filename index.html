@@ -489,7 +489,7 @@
   // Nota de instalación: SIEMPRE la misma, sin importar si el cliente marca el switch o no.
   // Redactada para que quede claro que el tope de $30.000 lo cubre el almacén y el resto es del cliente.
   const INSTALL_NOTE = `<b>Instalación (opcional):</b> tiene un costo de $30.000 – $50.000.
-    El almacén cubre <b>únicamente $30.000</b> del valor total; <b>el cliente asume el excedente</b>
+    El almacén cubre <b>únicamente $30.000</b> del valor total del envío; <b>el cliente asume el excedente</b>
     si el costo de instalación supera ese monto. Este valor de envío aplica solo para entrega
     <b>puerta a puerta</b>.`;
 
@@ -572,7 +572,7 @@
     updateRings(zone.ring);
 
     const priceTxt = zone.free ? 'Gratis' : `$${fmt(zone.min)} - $${fmt(zone.max)}`;
-    const msg = `Hola, quiero confirmar mi pedido en Confort Jireh.%0A%0AProducto: ${encodeURIComponent(producto)}%0AZona de entrega: ${encodeURIComponent(zone.label)}%0AEnvío estimado: ${encodeURIComponent(priceTxt)}%0AInstalación: ${install ? 'Sí' : 'No'}`;
+    const msg = `Hola, quiero confirmar el valor del envío antes de realizar una compra en Confort Jireh.%0A%0AProducto: ${encodeURIComponent(producto)}%0AZona de entrega: ${encodeURIComponent(zone.label)}%0AEnvío estimado: ${encodeURIComponent(priceTxt)}%0AInstalación: ${install ? 'Sí' : 'No'}`;
     waCta.href = `https://wa.me/${WHATSAPP_NUMBER}?text=${msg}`;
   }
 
