@@ -572,7 +572,7 @@
     updateRings(zone.ring);
 
     const priceTxt = zone.free ? 'Gratis' : `$${fmt(zone.min)} - $${fmt(zone.max)}`;
-    const msg = `Hola, quiero confirmar mi pedido en Confort Jireh.%0A%0AProducto: ${encodeURIComponent(producto)}%0AZona de entrega: ${encodeURIComponent(zone.label)}%0AEnvío estimado: ${encodeURIComponent(priceTxt)}%0AInstalación: ${install ? 'Sí' : 'No'}`;
+    const msg = `Hola, quiero confirmar el valor de envío antes de hacer mi pedido en Confort Jireh.%0A%0AProducto: ${encodeURIComponent(producto)}%0AZona de entrega: ${encodeURIComponent(zone.label)}%0AEnvío estimado: ${encodeURIComponent(priceTxt)}%0AInstalación: ${install ? 'Sí' : 'No'}`;
     waCta.href = `https://wa.me/${WHATSAPP_NUMBER}?text=${msg}`;
   }
 
