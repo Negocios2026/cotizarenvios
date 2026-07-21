@@ -1,0 +1,730 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Confort Jireh — Cotizador de envío</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;1,9..144,500&family=Work+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#0A0A0A;
+    --ink-2:#161616;
+    --ink-3:#202020;
+    --paper:#F5F1E7;
+    --gold:#C9A24E;
+    --gold-soft:#DDBD7C;
+    --teal:#2FBFA8;
+    --teal-deep:#1E8C7B;
+    --mist:#8F8F8F;
+    --line:rgba(245,241,231,0.10);
+    --radius:14px;
+    --red:#D9564F;
+  }
+
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:var(--ink);
+    color:var(--paper);
+    font-family:'Work Sans', sans-serif;
+    line-height:1.5;
+    -webkit-font-smoothing:antialiased;
+  }
+
+  .wrap{
+    max-width:1180px;
+    margin:0 auto;
+    padding:40px 24px 80px;
+  }
+
+  header.top{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    flex-wrap:wrap;
+    gap:16px;
+    padding-bottom:28px;
+    margin-bottom:32px;
+    border-bottom:1px solid var(--line);
+  }
+  .brand{
+    display:flex;
+    align-items:center;
+    gap:16px;
+  }
+  .brand-badge{
+    height:64px;width:64px;border-radius:50%;
+    border:2px solid var(--gold);
+    object-fit:cover;
+    flex:0 0 auto;
+  }
+  .brand .txt{
+    display:flex;
+    flex-direction:column;
+    gap:2px;
+  }
+  .brand .name{font-family:'Fraunces', serif; font-size:19px; color:var(--teal);}
+  .brand .sub{
+    color:var(--mist);
+    font-size:13px;
+    letter-spacing:0.02em;
+  }
+  .locale{
+    text-align:right;
+    color:var(--mist);
+    font-size:13px;
+    font-family:'IBM Plex Mono', monospace;
+  }
+  .locale strong{
+    display:block;
+    color:var(--paper);
+    font-family:'Work Sans', sans-serif;
+    font-size:14px;
+    font-weight:600;
+  }
+
+  main{
+    display:grid;
+    grid-template-columns: minmax(0,1fr) minmax(0,1.15fr);
+    gap:28px;
+    align-items:start;
+  }
+
+  .panel{
+    background:var(--ink-2);
+    border:1px solid var(--line);
+    border-radius:var(--radius);
+    padding:28px;
+  }
+
+  .field-label{
+    font-size:13px;
+    text-transform:uppercase;
+    letter-spacing:0.08em;
+    color:var(--mist);
+    margin:0 0 12px;
+    display:flex;
+    align-items:baseline;
+    gap:8px;
+  }
+  .field-label .n{
+    font-family:'IBM Plex Mono', monospace;
+    color:var(--teal);
+  }
+
+  fieldset{
+    border:0;
+    margin:0 0 28px;
+    padding:0;
+  }
+  fieldset:last-of-type{margin-bottom:0;}
+
+  /* Product chips */
+  .chips{
+    display:flex;
+    flex-wrap:wrap;
+    gap:8px;
+  }
+  .chip{
+    position:relative;
+  }
+  .chip input{
+    position:absolute;
+    opacity:0;
+    inset:0;
+    cursor:pointer;
+  }
+  .chip label{
+    display:block;
+    padding:9px 16px;
+    border:1px solid var(--line);
+    border-radius:100px;
+    font-size:14px;
+    color:var(--mist);
+    cursor:pointer;
+    transition:all .15s ease;
+  }
+  .chip input:checked + label{
+    background:var(--teal);
+    border-color:var(--teal);
+    color:#062723;
+    font-weight:600;
+  }
+  .chip input:focus-visible + label{
+    outline:2px solid var(--teal);
+    outline-offset:2px;
+  }
+
+  /* Zone list */
+  .zones{
+    display:flex;
+    flex-direction:column;
+    gap:8px;
+  }
+  .zone{
+    position:relative;
+  }
+  .zone input{
+    position:absolute;
+    opacity:0;
+    inset:0;
+    cursor:pointer;
+  }
+  .zone label{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:12px;
+    padding:13px 16px;
+    border:1px solid var(--line);
+    border-radius:10px;
+    cursor:pointer;
+    transition:all .15s ease;
+  }
+  .zone label .zname{
+    font-size:14.5px;
+  }
+  .zone label .zprice{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:12.5px;
+    color:var(--mist);
+    white-space:nowrap;
+  }
+  .zone input:checked + label{
+    background:var(--ink-3);
+    border-color:var(--gold);
+  }
+  .zone input:checked + label .zprice{color:var(--gold-soft);}
+  .zone input:focus-visible + label{
+    outline:2px solid var(--gold);
+    outline-offset:2px;
+  }
+
+  /* Install toggle */
+  .toggle-row{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:16px;
+    padding:14px 16px;
+    border:1px solid var(--line);
+    border-radius:10px;
+  }
+  .toggle-row .t-copy{font-size:14px;}
+  .toggle-row .t-copy small{display:block;color:var(--mist);font-size:12.5px;margin-top:2px;}
+  .switch{
+    position:relative;
+    width:44px;
+    height:26px;
+    flex:0 0 auto;
+  }
+  .switch input{
+    position:absolute;
+    opacity:0;
+    inset:0;
+    cursor:pointer;
+    margin:0;
+    z-index:2;
+  }
+  .switch .track{
+    position:absolute;
+    inset:0;
+    background:var(--ink);
+    border:1px solid var(--line);
+    border-radius:100px;
+    transition:background .15s ease;
+    pointer-events:none;
+  }
+  .switch .knob{
+    position:absolute;
+    top:3px; left:3px;
+    width:18px; height:18px;
+    border-radius:50%;
+    background:var(--mist);
+    transition:transform .15s ease, background .15s ease;
+    pointer-events:none;
+  }
+  .switch input:checked ~ .track{background:rgba(201,162,78,0.22); border-color:var(--gold);}
+  .switch input:checked ~ .knob{transform:translateX(18px); background:var(--gold);}
+  .switch input:focus-visible ~ .track{outline:2px solid var(--gold); outline-offset:2px;}
+
+  /* Result panel */
+  .result{
+    display:flex;
+    flex-direction:column;
+    gap:20px;
+    position:sticky;
+    top:24px;
+  }
+
+  .ring-card{
+    background:var(--ink-2);
+    border:1px solid var(--line);
+    border-radius:var(--radius);
+    padding:20px 20px 8px;
+  }
+  .ring-card svg{display:block; width:100%; height:auto;}
+  .ring-caption{
+    text-align:center;
+    font-size:12px;
+    color:var(--mist);
+    padding:10px 0 4px;
+  }
+
+  /* Warning box (cabecero / base cama) */
+  .warn-box{
+    background:rgba(217,86,79,0.12);
+    border:1.5px solid var(--red);
+    border-radius:var(--radius);
+    padding:20px;
+    font-size:13.5px;
+    color:var(--paper);
+  }
+  .warn-box b{color:#f0a9a4;}
+  .warn-actions{display:flex;gap:10px;margin-top:14px;}
+  .warn-btn{
+    flex:1;
+    padding:11px;
+    border-radius:9px;
+    border:1px solid var(--line);
+    cursor:pointer;
+    font-weight:600;
+    font-size:13.5px;
+  }
+  .warn-btn.yes{background:var(--teal);color:#062723;border-color:var(--teal);}
+  .warn-btn.no{background:var(--red);color:#fff;border-color:var(--red);}
+
+  .no-cover-note{
+    background:rgba(217,86,79,0.12);
+    border:1.5px solid var(--red);
+    border-radius:var(--radius);
+    padding:20px;
+    font-size:13.5px;
+    color:var(--paper);
+  }
+  .no-cover-note b{color:#f0a9a4;}
+
+  .quote-card{
+    background:var(--paper);
+    color:var(--ink);
+    border-radius:var(--radius);
+    padding:28px;
+  }
+  .quote-eyebrow{
+    font-size:12.5px;
+    text-transform:uppercase;
+    letter-spacing:0.08em;
+    color:var(--teal-deep);
+    font-weight:600;
+    margin-bottom:6px;
+  }
+  .quote-zone{
+    font-family:'Fraunces', serif;
+    font-size:22px;
+    margin:0 0 18px;
+  }
+  .quote-price{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:clamp(28px, 4vw, 38px);
+    font-weight:600;
+    color:var(--ink);
+    display:flex;
+    align-items:baseline;
+    gap:10px;
+    flex-wrap:wrap;
+  }
+  .quote-price .free{color:var(--teal-deep);}
+  .quote-price .sep{
+    font-family:'Work Sans', sans-serif;
+    font-size:14px;
+    font-weight:400;
+    color:#6b6455;
+  }
+  .quote-notes{
+    margin-top:22px;
+    padding-top:20px;
+    border-top:1px solid rgba(20,32,46,0.12);
+    display:flex;
+    flex-direction:column;
+    gap:14px;
+  }
+  .note{
+    display:flex;
+    gap:12px;
+    font-size:13.5px;
+    color:#3B3327;
+  }
+  .note .ico{
+    flex:0 0 auto;
+    width:20px;height:20px;
+    border-radius:50%;
+    background:rgba(20,32,46,0.08);
+    display:flex;align-items:center;justify-content:center;
+    font-size:11px;
+    font-weight:600;
+    color:var(--ink);
+    margin-top:1px;
+  }
+  .note.install{
+    background:rgba(201,162,78,0.10);
+    border:1px solid rgba(201,162,78,0.35);
+    border-radius:10px;
+    padding:12px 14px;
+  }
+  .note.install .ico{background:rgba(201,162,78,0.25); color:#8a6a1f;}
+  .note.warranty .ico{background:rgba(47,191,168,0.18); color:var(--teal-deep);}
+  .note b{color:var(--ink);}
+
+  .disclaimer{
+    font-size:12.5px;
+    color:#ffe1de;
+    background:rgba(217,86,79,0.16);
+    border:1.5px solid var(--red);
+    border-radius:var(--radius);
+    padding:16px 20px;
+    display:flex;
+    gap:10px;
+    font-weight:500;
+  }
+  .disclaimer .ico{flex:0 0 auto;}
+
+  .cta{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:10px;
+    background:var(--teal);
+    color:#062723;
+    text-decoration:none;
+    font-weight:600;
+    font-size:15px;
+    padding:15px 20px;
+    border-radius:10px;
+    transition:filter .15s ease;
+  }
+  .cta:hover{filter:brightness(1.08);}
+  .cta:focus-visible{outline:2px solid var(--gold); outline-offset:3px;}
+
+  .back-btn{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:8px;
+    background:transparent;
+    border:1px solid var(--line);
+    color:var(--mist);
+    text-decoration:none;
+    padding:13px 20px;
+    border-radius:10px;
+    font-size:13.5px;
+    transition:all .15s ease;
+  }
+  .back-btn:hover{color:var(--paper); border-color:var(--paper);}
+
+  .top-actions{
+    display:flex;
+    gap:14px;
+    justify-content:center;
+    flex-wrap:wrap;
+    margin-bottom:32px;
+  }
+  .top-actions .cta, .top-actions .back-btn{
+    margin:0;
+    flex:0 1 320px;
+  }
+
+  @media (max-width: 860px){
+    main{grid-template-columns:1fr;}
+    .result{position:static;}
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    *{transition:none !important;}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="top">
+    <div class="brand">
+<img class="brand-badge" src="data:image/jpeg;base64,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" alt="Confort Jireh">
+      <div class="txt">
+        <span class="name">Confort Jireh</span>
+        <span class="sub">Colchones · Bases cama · Cabeceros — Bogotá y alrededores</span>
+      </div>
+    </div>
+    <div class="locale">
+      <strong>Punto físico</strong>
+      Verbenal Norte, Bogotá
+    </div>
+  </header>
+
+  <div class="top-actions">
+    <a class="cta" id="waCta" href="#" target="_blank" rel="noopener">
+      Confirmar pedido por WhatsApp →
+    </a>
+    <a class="back-btn" href="https://negocios2026.github.io/catalogoconfortjireh2026/">
+      ← Regresar al inicio / catálogos
+    </a>
+  </div>
+
+  <main>
+    <!-- FORM -->
+    <section class="panel">
+      <fieldset>
+        <p class="field-label"><span class="n">01</span> Producto de interés</p>
+        <div class="chips" id="productChips">
+          <div class="chip"><input type="radio" name="producto" id="p-colchon" value="Colchón" checked><label for="p-colchon">Colchón</label></div>
+          <div class="chip"><input type="radio" name="producto" id="p-base" value="Base cama"><label for="p-base">Base cama</label></div>
+          <div class="chip"><input type="radio" name="producto" id="p-cabecero" value="Cabecero"><label for="p-cabecero">Cabecero</label></div>
+          <div class="chip"><input type="radio" name="producto" id="p-combo" value="Combo (colchón + base)"><label for="p-combo">Combo</label></div>
+        </div>
+      </fieldset>
+
+      <fieldset>
+        <p class="field-label"><span class="n">02</span> Zona de entrega</p>
+        <div class="zones" id="zoneList"></div>
+      </fieldset>
+
+      <fieldset>
+        <p class="field-label"><span class="n">03</span> Servicio adicional</p>
+        <div class="toggle-row">
+          <div class="t-copy">
+            Subida e instalación
+            <small>Armado del producto en el punto de entrega</small>
+          </div>
+          <div class="switch">
+            <input type="checkbox" id="installToggle">
+            <span class="track"></span>
+            <span class="knob"></span>
+          </div>
+        </div>
+      </fieldset>
+    </section>
+
+    <!-- RESULT -->
+    <section class="result">
+      <div class="ring-card">
+        <svg id="ringSvg" viewBox="0 0 420 260" fill="none"></svg>
+        <p class="ring-caption">Distancia estimada desde el punto de Verbenal Norte</p>
+      </div>
+
+      <!-- Alerta previa para Cabecero / Base cama -->
+      <div class="warn-box" id="warnBox" style="display:none;">
+        <div id="warnText"></div>
+        <div class="warn-actions">
+          <button class="warn-btn yes" id="warnYes">Sí, deseo continuar</button>
+          <button class="warn-btn no" id="warnNo">No, cancelar</button>
+        </div>
+      </div>
+
+      <!-- Nota cuando el cliente decide NO continuar -->
+      <div class="no-cover-note" id="noCoverNote" style="display:none;">
+        <b>Entendido.</b> Para este producto el transporte corre por tu cuenta. Escríbenos por WhatsApp para coordinar el envío directamente con el transportador.
+      </div>
+
+      <!-- Cotización normal -->
+      <div id="normalQuoteUI">
+        <div class="quote-card">
+          <p class="quote-eyebrow">Costo estimado de envío</p>
+          <h2 class="quote-zone" id="quoteZone">—</h2>
+          <div class="quote-price" id="quotePrice">—</div>
+
+          <div class="quote-notes">
+            <div class="note" id="standardNote">
+              <span class="ico">i</span>
+              <div><b>Entrega puerta a puerta</b> — portería o lobby. El almacén cubre $30.000 pesos del valor de envío y el cliente asume el excedente. El valor estándar <b>NO INCLUYE SUBIR PISOS</b>; si requieres este servicio, habilita la casilla para cotizarlo.</div>
+            </div>
+            <div class="note install" id="installNoteBox" style="display:none;">
+              <span class="ico">$</span>
+              <div id="installNote"></div>
+            </div>
+            <div class="note warranty">
+              <span class="ico">!</span>
+              <div><b>Garantías:</b> si haces efectiva una garantía, el transporte para llevar el producto a garantía y para recoger la garantía ya realizada (si aplica) corre 100% por tu cuenta.</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="disclaimer" style="margin-top:20px;">
+          <span class="ico">⚠</span>
+          <span>Este valor es un <b>estimado</b>. Confírmalo con el almacén antes de tu compra final: puede variar según piso, acceso vehicular y tamaño del producto.</span>
+        </div>
+      </div>
+    </section>
+  </main>
+</div>
+
+<script>
+  const ZONES = [
+    { id:'verbenal',  label:'Verbenal / San Antonio (hasta 3km)',              min:0,      max:0,      free:true, ring:1 },
+    { id:'cedritos',  label:'Cedritos / Usaquén',                              min:60000,  max:80000,  ring:2 },
+    { id:'suba',      label:'Suba / Chapinero / Barrios Unidos',               min:100000, max:130000, ring:3 },
+    { id:'engativa',  label:'Engativá / Fontibón / Santa Fe / Candelaria',     min:120000, max:150000, ring:4 },
+    { id:'kennedy',   label:'Kennedy / Bosa / Ciudad Bolívar / Usme',          min:150000, max:180000, ring:5 },
+    { id:'sabana',    label:'Chía / Cajicá / Funza / Mosquera',                min:190000, max:220000, ring:6 },
+    { id:'sopo',      label:'Sopó / Tocancipá',                                min:230000, max:260000, ring:7 },
+  ];
+
+  const WHATSAPP_NUMBER = '573113669723';
+
+  const NO_COVER_PRODUCTS = ['Base cama', 'Cabecero'];
+
+  const INSTALL_NOTE = `<b>Instalación (opcional):</b> tiene un costo de $20.000 – $50.000 adicionales al valor de envío.
+    El almacén NO cubre este valor adicional; el 100% de este valor adicional lo asume el cliente, y ese valor ya lo coordina el cliente directamente con la persona que hace el acarreo.
+    <b>Importante:</b> confirma con el almacén previamente si vas a requerir este servicio adicional.`;
+
+  const zoneListEl = document.getElementById('zoneList');
+  const ringSvg = document.getElementById('ringSvg');
+  const quoteZoneEl = document.getElementById('quoteZone');
+  const quotePriceEl = document.getElementById('quotePrice');
+  const installNoteEl = document.getElementById('installNote');
+  const installNoteBox = document.getElementById('installNoteBox');
+  const waCta = document.getElementById('waCta');
+  const warnBox = document.getElementById('warnBox');
+  const warnText = document.getElementById('warnText');
+  const noCoverNote = document.getElementById('noCoverNote');
+  const normalQuoteUI = document.getElementById('normalQuoteUI');
+
+  installNoteEl.innerHTML = INSTALL_NOTE;
+
+  let coverageChoice = null;
+
+  function fmt(n){
+    return n.toLocaleString('es-CO');
+  }
+
+  ZONES.forEach((z, i) => {
+    const wrap = document.createElement('div');
+    wrap.className = 'zone';
+    const priceLabel = z.free ? 'Gratis' : `$${fmt(z.min)} – $${fmt(z.max)}`;
+    wrap.innerHTML = `
+      <input type="radio" name="zona" id="z-${z.id}" value="${z.id}" ${i===0?'checked':''}>
+      <label for="z-${z.id}">
+        <span class="zname">${z.label}</span>
+        <span class="zprice">${priceLabel}</span>
+      </label>
+    `;
+    zoneListEl.appendChild(wrap);
+  });
+
+  const PIN_ICONS = {
+    'Colchón': `
+      <rect x="-16" y="-9" width="32" height="18" rx="4" fill="#C9A24E" stroke="#062723" stroke-width="1.2"/>
+      <line x1="-11" y1="-3" x2="11" y2="-3" stroke="#062723" stroke-width="1.2"/>
+      <line x1="-11" y1="3" x2="11" y2="3" stroke="#062723" stroke-width="1.2"/>
+    `,
+    'Base cama': `
+      <rect x="-17" y="-6" width="34" height="12" rx="2" fill="#C9A24E" stroke="#062723" stroke-width="1.2"/>
+      <line x1="-13" y1="6" x2="-13" y2="12" stroke="#C9A24E" stroke-width="3" stroke-linecap="round"/>
+      <line x1="13" y1="6" x2="13" y2="12" stroke="#C9A24E" stroke-width="3" stroke-linecap="round"/>
+    `,
+    'Cabecero': `
+      <path d="M-14 12 V-4 Q-14 -14 0 -14 Q14 -14 14 -4 V12" fill="#C9A24E" stroke="#062723" stroke-width="1.2"/>
+      <line x1="-14" y1="12" x2="14" y2="12" stroke="#062723" stroke-width="1.2"/>
+    `,
+    'Combo (colchón + base)': `
+      <path d="M-15 10 V0 Q-15 -9 -3 -9 Q9 -9 9 0 V10" fill="none" stroke="#C9A24E" stroke-width="2.4"/>
+      <rect x="-16" y="4" width="30" height="12" rx="3" fill="#C9A24E" stroke="#062723" stroke-width="1.2"/>
+    `
+  };
+
+  function pinIconFor(producto){
+    return PIN_ICONS[producto] || PIN_ICONS['Colchón'];
+  }
+
+  const cx = 90, cy = 210;
+  const maxRing = Math.max(...ZONES.map(z => z.ring));
+  let ringsMarkup = '';
+  for (let r = 1; r <= maxRing; r++){
+    const radius = 28 + r * 42;
+    ringsMarkup += `<circle class="ring" data-ring="${r}" cx="${cx}" cy="${cy}" r="${radius}"
+      fill="none" stroke="var(--line)" stroke-width="1.5" />`;
+  }
+  ringSvg.innerHTML = `${ringsMarkup}
+    <g id="pinGroup" transform="translate(${cx},${cy})"></g>
+    <text x="${cx}" y="${cy+30}" text-anchor="middle" fill="var(--mist)" font-size="10" font-family="IBM Plex Mono, monospace">Verbenal</text>`;
+
+  function updatePin(producto){
+    document.getElementById('pinGroup').innerHTML = pinIconFor(producto);
+  }
+
+  function updateRings(activeRing){
+    document.querySelectorAll('#ringSvg .ring').forEach(el => {
+      const r = parseInt(el.dataset.ring, 10);
+      if (r === activeRing){
+        el.setAttribute('stroke', 'var(--teal)');
+        el.setAttribute('stroke-width', '2.5');
+        el.setAttribute('opacity', '1');
+      } else if (r < activeRing) {
+        el.setAttribute('stroke', 'var(--mist)');
+        el.setAttribute('stroke-width', '1');
+        el.setAttribute('opacity', '0.35');
+      } else {
+        el.setAttribute('stroke', 'var(--line)');
+        el.setAttribute('stroke-width', '1');
+        el.setAttribute('opacity', '0.5');
+      }
+    });
+  }
+
+  function render(){
+    const zoneId = document.querySelector('input[name="zona"]:checked').value;
+    const producto = document.querySelector('input[name="producto"]:checked').value;
+    const install = document.getElementById('installToggle').checked;
+    const zone = ZONES.find(z => z.id === zoneId);
+
+    updateRings(zone.ring);
+    updatePin(producto);
+
+    const needsConfirm = NO_COVER_PRODUCTS.includes(producto);
+
+    if (needsConfirm && coverageChoice === null){
+      warnText.innerHTML = `<b>Aviso:</b> para <b>${producto}</b> el almacén NO cubre ningún valor del transporte — el costo completo lo asume el cliente. ¿Deseas continuar de todas formas?`;
+      warnBox.style.display = 'block';
+      noCoverNote.style.display = 'none';
+      normalQuoteUI.style.display = 'none';
+      return;
+    }
+
+    if (needsConfirm && coverageChoice === false){
+      warnBox.style.display = 'none';
+      noCoverNote.style.display = 'block';
+      normalQuoteUI.style.display = 'none';
+      return;
+    }
+
+    warnBox.style.display = 'none';
+    noCoverNote.style.display = 'none';
+    normalQuoteUI.style.display = 'block';
+
+    quoteZoneEl.textContent = zone.label;
+    if (zone.free){
+      quotePriceEl.innerHTML = `<span class="free">$0</span><span class="sep">— zona gratuita</span>`;
+    } else {
+      quotePriceEl.innerHTML = `$${fmt(zone.min)} <span class="sep">–</span> $${fmt(zone.max)}`;
+    }
+
+    installNoteBox.style.display = install ? 'flex' : 'none';
+
+    const priceTxt = zone.free ? 'Gratis' : `$${fmt(zone.min)} - $${fmt(zone.max)}`;
+    const msg = `Hola, quiero confirmar si estos son los valores del envío al realizar una compra de producto en Confort Jireh.%0A%0AProducto: ${encodeURIComponent(producto)}%0AZona de entrega: ${encodeURIComponent(zone.label)}%0AEnvío estimado: ${encodeURIComponent(priceTxt)}%0AInstalación: ${install ? 'Sí' : 'No'}`;
+    waCta.href = `https://wa.me/${WHATSAPP_NUMBER}?text=${msg}`;
+  }
+
+  document.getElementById('productChips').addEventListener('change', () => {
+    coverageChoice = null;
+    render();
+  });
+  zoneListEl.addEventListener('change', render);
+  document.getElementById('installToggle').addEventListener('change', render);
+  document.getElementById('warnYes').addEventListener('click', () => { coverageChoice = true; render(); });
+  document.getElementById('warnNo').addEventListener('click', () => { coverageChoice = false; render(); });
+
+  render();
+</script>
+</body>
+</html>
